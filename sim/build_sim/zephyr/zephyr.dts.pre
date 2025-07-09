@@ -1,0 +1,958 @@
+# 0 "/home/davit/Desktop/sim/zephyr/misc/empty_file.c"
+# 0 "<built-in>"
+# 0 "<command-line>"
+# 1 "/home/davit/Desktop/sim/sim-fw/boards/sim-cxx/sim-cxx.dts" 1
+
+
+
+
+
+/dts-v1/;
+
+# 1 "/home/davit/Desktop/sim/zephyr/include/zephyr/dt-bindings/gpio/gpio.h" 1 3 4
+# 9 "/home/davit/Desktop/sim/sim-fw/boards/sim-cxx/sim-cxx.dts" 2
+# 1 "/home/davit/Desktop/sim/zephyr/dts/riscv/wch/ch58x/ch582f.dtsi" 1 3 4
+
+
+
+
+
+# 1 "/home/davit/Desktop/sim/zephyr/dts/riscv/wch/ch58x/ch58x-common.dtsi" 1 3 4
+
+
+
+
+
+# 1 "/home/davit/Desktop/sim/zephyr/dts/common/mem.h" 1 3 4
+# 7 "/home/davit/Desktop/sim/zephyr/dts/riscv/wch/ch58x/ch58x-common.dtsi" 2 3 4
+# 1 "/home/davit/Desktop/sim/zephyr/dts/common/freq.h" 1 3 4
+# 8 "/home/davit/Desktop/sim/zephyr/dts/riscv/wch/ch58x/ch58x-common.dtsi" 2 3 4
+
+# 1 "/home/davit/Desktop/sim/zephyr/dts/riscv/wch/qingke-v4.dtsi" 1 3 4
+
+
+
+
+
+/ {
+ cpus {
+  #address-cells = <1>;
+  #size-cells = <0>;
+
+  cpu0: cpu@0 {
+   compatible = "wch,qingke-v4";
+   reg = <0>;
+  };
+ };
+
+ soc {
+  compatible = "simple-bus";
+  #address-cells = <1>;
+  #size-cells = <1>;
+  interrupt-parent = <&pfic>;
+
+  pfic: pfic@e000e000 {
+   compatible = "wch,ch32v-pfic";
+   reg = <0xe000e000 0x1000>;
+   interrupt-controller;
+   #interrupt-cells = <2>;
+  };
+
+  systick: systick@e000f000 {
+   compatible = "wch,ch32v-v4-systick";
+   reg = <0xe000f000 0x14>;
+   interrupts = <12 0>;
+  };
+ };
+};
+# 10 "/home/davit/Desktop/sim/zephyr/dts/riscv/wch/ch58x/ch58x-common.dtsi" 2 3 4
+# 1 "/home/davit/Desktop/sim/zephyr/include/zephyr/dt-bindings/pwm/pwm.h" 1 3 4
+# 11 "/home/davit/Desktop/sim/zephyr/dts/riscv/wch/ch58x/ch58x-common.dtsi" 2 3 4
+
+/ {
+ chosen {
+  zephyr,flash-controller = &flash_controller;
+ };
+
+ soc {
+  flash_controller: flash-controller@40001800 {
+   compatible = "wch,ch5xx-flash-controller";
+   reg = <0x40001800 0x400>;
+
+   #address-cells = <1>;
+   #size-cells = <1>;
+   flash0: flash@0 {
+    compatible = "wch,nv-flash", "soc-nv-flash";
+    reg = <0x00000000 ((448) * 1024)>,
+          <0x00070000 ((32) * 1024)>;
+    reg-names = "code_flash", "data_flash";
+    erase-block-size = <4096>;
+    write-block-size = <4>;
+    data-erase-block-size = <256>;
+    data-write-block-size = <1>;
+   };
+  };
+
+  sram: memory@20000000 {
+   compatible = "mmio-sram";
+   reg = <0x20000000 ((32) * 1024)>;
+  };
+
+  syscon: system-controller@40001000 {
+   reg = <0x40001000 0xa0>;
+
+   pinctrl: pin-controller {
+    compatible = "wch,ch5xx-pinctrl";
+    gpio-controllers = <&gpioa>, <&gpiob>;
+   };
+  };
+
+  gpioa: gpio@400010a0 {
+   compatible = "wch,ch57x-gpio";
+   reg = <0x400010a0 0x20>;
+   interrupts = <17 3>;
+   gpio-controller;
+   #gpio-cells = <2>;
+   ngpios = <16>;
+  };
+
+  gpiob: gpio@400010c0 {
+   compatible = "wch,ch57x-gpio";
+   reg = <0x400010c0 0x20>;
+   interrupts = <18 4>;
+   gpio-controller;
+   #gpio-cells = <2>;
+   ngpios = <24>;
+  };
+
+  uart0: uart@40003000 {
+   compatible = "wch,ch5xx-uart";
+   reg = <0x40003000 0x400>;
+   interrupts = <26 12>;
+   clocks = <&hclk>;
+   status = "disabled";
+  };
+
+  uart1: uart@40003400 {
+   compatible = "wch,ch5xx-uart";
+   reg = <0x40003400 0x400>;
+   interrupts = <27 13>;
+   clocks = <&hclk>;
+   status = "disabled";
+  };
+
+  usbd: udc@40008000 {
+   compatible = "wch,ch58x-udc";
+   reg = <0x40008000 0x400>;
+   interrupts = <22 8>;
+   clocks = <&hclk>;
+   maximum-speed = "full-speed";
+   num-bidir-endpoints = <8>;
+   num-in-endpoints = <7>;
+   num-out-endpoints = <7>;
+   status = "disabled";
+  };
+
+  usbd2: udc@40008400 {
+   compatible = "wch,ch58x-udc";
+   reg = <0x40008400 0x400>;
+   interrupts = <23 9>;
+   clocks = <&hclk>;
+   maximum-speed = "full-speed";
+   num-bidir-endpoints = <8>;
+   num-in-endpoints = <7>;
+   num-out-endpoints = <7>;
+  };
+
+  pwm: pwm@40005000 {
+   compatible = "wch,ch5xx-pwm";
+   #pwm-cells = <3>;
+   prescaler = <31>;
+   reg = <0x40005000 0x400>;
+   clocks = <&hclk>;
+   status = "disabled";
+  };
+ };
+
+ clocks {
+  hclk: clkmux {
+   compatible = "wch,ch57x-clkmux";
+   clock-frequency = <((6400) * 1000)>;
+   #clock-cells = <0>;
+  };
+ };
+};
+# 7 "/home/davit/Desktop/sim/zephyr/dts/riscv/wch/ch58x/ch582f.dtsi" 2 3 4
+# 1 "/home/davit/Desktop/sim/zephyr/dts/riscv/wch/ch58x/ch58xf-common.dtsi" 1 3 4
+
+
+
+
+
+# 1 "/home/davit/Desktop/sim/zephyr/dts/riscv/wch/ch58x/ch58x-common.dtsi" 1 3 4
+# 9 "/home/davit/Desktop/sim/zephyr/dts/riscv/wch/ch58x/ch58x-common.dtsi" 3 4
+# 1 "/home/davit/Desktop/sim/zephyr/dts/riscv/wch/qingke-v4.dtsi" 1 3 4
+
+
+
+
+
+/ {
+ cpus {
+  #address-cells = <1>;
+  #size-cells = <0>;
+
+  cpu0: cpu@0 {
+   compatible = "wch,qingke-v4";
+   reg = <0>;
+  };
+ };
+
+ soc {
+  compatible = "simple-bus";
+  #address-cells = <1>;
+  #size-cells = <1>;
+  interrupt-parent = <&pfic>;
+
+  pfic: pfic@e000e000 {
+   compatible = "wch,ch32v-pfic";
+   reg = <0xe000e000 0x1000>;
+   interrupt-controller;
+   #interrupt-cells = <2>;
+  };
+
+  systick: systick@e000f000 {
+   compatible = "wch,ch32v-v4-systick";
+   reg = <0xe000f000 0x14>;
+   interrupts = <12 0>;
+  };
+ };
+};
+# 10 "/home/davit/Desktop/sim/zephyr/dts/riscv/wch/ch58x/ch58x-common.dtsi" 2 3 4
+
+
+/ {
+ chosen {
+  zephyr,flash-controller = &flash_controller;
+ };
+
+ soc {
+  flash_controller: flash-controller@40001800 {
+   compatible = "wch,ch5xx-flash-controller";
+   reg = <0x40001800 0x400>;
+
+   #address-cells = <1>;
+   #size-cells = <1>;
+   flash0: flash@0 {
+    compatible = "wch,nv-flash", "soc-nv-flash";
+    reg = <0x00000000 ((448) * 1024)>,
+          <0x00070000 ((32) * 1024)>;
+    reg-names = "code_flash", "data_flash";
+    erase-block-size = <4096>;
+    write-block-size = <4>;
+    data-erase-block-size = <256>;
+    data-write-block-size = <1>;
+   };
+  };
+
+  sram: memory@20000000 {
+   compatible = "mmio-sram";
+   reg = <0x20000000 ((32) * 1024)>;
+  };
+
+  syscon: system-controller@40001000 {
+   reg = <0x40001000 0xa0>;
+
+   pinctrl: pin-controller {
+    compatible = "wch,ch5xx-pinctrl";
+    gpio-controllers = <&gpioa>, <&gpiob>;
+   };
+  };
+
+  gpioa: gpio@400010a0 {
+   compatible = "wch,ch57x-gpio";
+   reg = <0x400010a0 0x20>;
+   interrupts = <17 3>;
+   gpio-controller;
+   #gpio-cells = <2>;
+   ngpios = <16>;
+  };
+
+  gpiob: gpio@400010c0 {
+   compatible = "wch,ch57x-gpio";
+   reg = <0x400010c0 0x20>;
+   interrupts = <18 4>;
+   gpio-controller;
+   #gpio-cells = <2>;
+   ngpios = <24>;
+  };
+
+  uart0: uart@40003000 {
+   compatible = "wch,ch5xx-uart";
+   reg = <0x40003000 0x400>;
+   interrupts = <26 12>;
+   clocks = <&hclk>;
+   status = "disabled";
+  };
+
+  uart1: uart@40003400 {
+   compatible = "wch,ch5xx-uart";
+   reg = <0x40003400 0x400>;
+   interrupts = <27 13>;
+   clocks = <&hclk>;
+   status = "disabled";
+  };
+
+  usbd: udc@40008000 {
+   compatible = "wch,ch58x-udc";
+   reg = <0x40008000 0x400>;
+   interrupts = <22 8>;
+   clocks = <&hclk>;
+   maximum-speed = "full-speed";
+   num-bidir-endpoints = <8>;
+   num-in-endpoints = <7>;
+   num-out-endpoints = <7>;
+   status = "disabled";
+  };
+
+  usbd2: udc@40008400 {
+   compatible = "wch,ch58x-udc";
+   reg = <0x40008400 0x400>;
+   interrupts = <23 9>;
+   clocks = <&hclk>;
+   maximum-speed = "full-speed";
+   num-bidir-endpoints = <8>;
+   num-in-endpoints = <7>;
+   num-out-endpoints = <7>;
+  };
+
+  pwm: pwm@40005000 {
+   compatible = "wch,ch5xx-pwm";
+   #pwm-cells = <3>;
+   prescaler = <31>;
+   reg = <0x40005000 0x400>;
+   clocks = <&hclk>;
+   status = "disabled";
+  };
+ };
+
+ clocks {
+  hclk: clkmux {
+   compatible = "wch,ch57x-clkmux";
+   clock-frequency = <((6400) * 1000)>;
+   #clock-cells = <0>;
+  };
+ };
+};
+# 7 "/home/davit/Desktop/sim/zephyr/dts/riscv/wch/ch58x/ch58xf-common.dtsi" 2 3 4
+
+&gpioa {
+ gpio-reserved-ranges = <0 4>,
+          <6 2>;
+};
+
+&gpiob {
+ gpio-reserved-ranges = <0 4>,
+          <5 2>,
+          <8 2>,
+          <16 6>;
+};
+# 8 "/home/davit/Desktop/sim/zephyr/dts/riscv/wch/ch58x/ch582f.dtsi" 2 3 4
+# 1 "/home/davit/Desktop/sim/zephyr/dts/riscv/wch/ch58x/ch582x-common.dtsi" 1 3 4
+
+
+
+
+
+# 1 "/home/davit/Desktop/sim/zephyr/dts/riscv/wch/ch58x/ch58x-common.dtsi" 1 3 4
+# 9 "/home/davit/Desktop/sim/zephyr/dts/riscv/wch/ch58x/ch58x-common.dtsi" 3 4
+# 1 "/home/davit/Desktop/sim/zephyr/dts/riscv/wch/qingke-v4.dtsi" 1 3 4
+
+
+
+
+
+/ {
+ cpus {
+  #address-cells = <1>;
+  #size-cells = <0>;
+
+  cpu0: cpu@0 {
+   compatible = "wch,qingke-v4";
+   reg = <0>;
+  };
+ };
+
+ soc {
+  compatible = "simple-bus";
+  #address-cells = <1>;
+  #size-cells = <1>;
+  interrupt-parent = <&pfic>;
+
+  pfic: pfic@e000e000 {
+   compatible = "wch,ch32v-pfic";
+   reg = <0xe000e000 0x1000>;
+   interrupt-controller;
+   #interrupt-cells = <2>;
+  };
+
+  systick: systick@e000f000 {
+   compatible = "wch,ch32v-v4-systick";
+   reg = <0xe000f000 0x14>;
+   interrupts = <12 0>;
+  };
+ };
+};
+# 10 "/home/davit/Desktop/sim/zephyr/dts/riscv/wch/ch58x/ch58x-common.dtsi" 2 3 4
+
+
+/ {
+ chosen {
+  zephyr,flash-controller = &flash_controller;
+ };
+
+ soc {
+  flash_controller: flash-controller@40001800 {
+   compatible = "wch,ch5xx-flash-controller";
+   reg = <0x40001800 0x400>;
+
+   #address-cells = <1>;
+   #size-cells = <1>;
+   flash0: flash@0 {
+    compatible = "wch,nv-flash", "soc-nv-flash";
+    reg = <0x00000000 ((448) * 1024)>,
+          <0x00070000 ((32) * 1024)>;
+    reg-names = "code_flash", "data_flash";
+    erase-block-size = <4096>;
+    write-block-size = <4>;
+    data-erase-block-size = <256>;
+    data-write-block-size = <1>;
+   };
+  };
+
+  sram: memory@20000000 {
+   compatible = "mmio-sram";
+   reg = <0x20000000 ((32) * 1024)>;
+  };
+
+  syscon: system-controller@40001000 {
+   reg = <0x40001000 0xa0>;
+
+   pinctrl: pin-controller {
+    compatible = "wch,ch5xx-pinctrl";
+    gpio-controllers = <&gpioa>, <&gpiob>;
+   };
+  };
+
+  gpioa: gpio@400010a0 {
+   compatible = "wch,ch57x-gpio";
+   reg = <0x400010a0 0x20>;
+   interrupts = <17 3>;
+   gpio-controller;
+   #gpio-cells = <2>;
+   ngpios = <16>;
+  };
+
+  gpiob: gpio@400010c0 {
+   compatible = "wch,ch57x-gpio";
+   reg = <0x400010c0 0x20>;
+   interrupts = <18 4>;
+   gpio-controller;
+   #gpio-cells = <2>;
+   ngpios = <24>;
+  };
+
+  uart0: uart@40003000 {
+   compatible = "wch,ch5xx-uart";
+   reg = <0x40003000 0x400>;
+   interrupts = <26 12>;
+   clocks = <&hclk>;
+   status = "disabled";
+  };
+
+  uart1: uart@40003400 {
+   compatible = "wch,ch5xx-uart";
+   reg = <0x40003400 0x400>;
+   interrupts = <27 13>;
+   clocks = <&hclk>;
+   status = "disabled";
+  };
+
+  usbd: udc@40008000 {
+   compatible = "wch,ch58x-udc";
+   reg = <0x40008000 0x400>;
+   interrupts = <22 8>;
+   clocks = <&hclk>;
+   maximum-speed = "full-speed";
+   num-bidir-endpoints = <8>;
+   num-in-endpoints = <7>;
+   num-out-endpoints = <7>;
+   status = "disabled";
+  };
+
+  usbd2: udc@40008400 {
+   compatible = "wch,ch58x-udc";
+   reg = <0x40008400 0x400>;
+   interrupts = <23 9>;
+   clocks = <&hclk>;
+   maximum-speed = "full-speed";
+   num-bidir-endpoints = <8>;
+   num-in-endpoints = <7>;
+   num-out-endpoints = <7>;
+  };
+
+  pwm: pwm@40005000 {
+   compatible = "wch,ch5xx-pwm";
+   #pwm-cells = <3>;
+   prescaler = <31>;
+   reg = <0x40005000 0x400>;
+   clocks = <&hclk>;
+   status = "disabled";
+  };
+ };
+
+ clocks {
+  hclk: clkmux {
+   compatible = "wch,ch57x-clkmux";
+   clock-frequency = <((6400) * 1000)>;
+   #clock-cells = <0>;
+  };
+ };
+};
+# 7 "/home/davit/Desktop/sim/zephyr/dts/riscv/wch/ch58x/ch582x-common.dtsi" 2 3 4
+
+/ {
+ soc {
+  flash-controller@40001800 {
+   flash0: flash@0 {
+    reg = <0x00000000 ((448) * 1024)>,
+          <0x00070000 ((32) * 1024)>;
+   };
+  };
+ };
+};
+# 9 "/home/davit/Desktop/sim/zephyr/dts/riscv/wch/ch58x/ch582f.dtsi" 2 3 4
+
+/ {
+ soc {
+  compatible = "wch,ch582f";
+ };
+};
+# 10 "/home/davit/Desktop/sim/sim-fw/boards/sim-cxx/sim-cxx.dts" 2
+# 1 "/home/davit/Desktop/sim/zephyr/dts/riscv/wch/ch58x/ch582f-pinctrl.dtsi" 1 3 4
+
+
+
+
+
+# 1 "/home/davit/Desktop/sim/zephyr/dts/riscv/wch/ch58x/ch58x-common-pinctrl.dtsi" 1 3 4
+
+
+
+
+
+# 1 "/home/davit/Desktop/sim/zephyr/include/zephyr/dt-bindings/pinctrl/ch58x-pinctrl.h" 1 3 4
+# 9 "/home/davit/Desktop/sim/zephyr/include/zephyr/dt-bindings/pinctrl/ch58x-pinctrl.h" 3 4
+# 1 "/home/davit/Desktop/sim/zephyr/include/zephyr/dt-bindings/dt-util.h" 1 3 4
+# 19 "/home/davit/Desktop/sim/zephyr/include/zephyr/dt-bindings/dt-util.h" 3 4
+# 1 "/home/davit/Desktop/sim/zephyr/include/zephyr/sys/util_macro.h" 1 3 4
+# 34 "/home/davit/Desktop/sim/zephyr/include/zephyr/sys/util_macro.h" 3 4
+# 1 "/home/davit/Desktop/sim/zephyr/include/zephyr/sys/util_internal.h" 1 3 4
+# 18 "/home/davit/Desktop/sim/zephyr/include/zephyr/sys/util_internal.h" 3 4
+# 1 "/home/davit/Desktop/sim/zephyr/include/zephyr/sys/util_loops.h" 1 3 4
+# 1083 "/home/davit/Desktop/sim/zephyr/include/zephyr/sys/util_loops.h" 3 4
+# 1 "/home/davit/Desktop/sim/zephyr/include/zephyr/sys/util_listify.h" 1 3 4
+# 1084 "/home/davit/Desktop/sim/zephyr/include/zephyr/sys/util_loops.h" 2 3 4
+# 19 "/home/davit/Desktop/sim/zephyr/include/zephyr/sys/util_internal.h" 2 3 4
+# 162 "/home/davit/Desktop/sim/zephyr/include/zephyr/sys/util_internal.h" 3 4
+# 1 "/home/davit/Desktop/sim/zephyr/include/zephyr/sys/util_internal_is_eq.h" 1 3 4
+# 163 "/home/davit/Desktop/sim/zephyr/include/zephyr/sys/util_internal.h" 2 3 4
+# 193 "/home/davit/Desktop/sim/zephyr/include/zephyr/sys/util_internal.h" 3 4
+# 1 "/home/davit/Desktop/sim/zephyr/include/zephyr/sys/util_internal_util_inc.h" 1 3 4
+# 194 "/home/davit/Desktop/sim/zephyr/include/zephyr/sys/util_internal.h" 2 3 4
+
+
+# 1 "/home/davit/Desktop/sim/zephyr/include/zephyr/sys/util_internal_util_dec.h" 1 3 4
+# 197 "/home/davit/Desktop/sim/zephyr/include/zephyr/sys/util_internal.h" 2 3 4
+
+
+# 1 "/home/davit/Desktop/sim/zephyr/include/zephyr/sys/util_internal_util_x2.h" 1 3 4
+# 200 "/home/davit/Desktop/sim/zephyr/include/zephyr/sys/util_internal.h" 2 3 4
+# 35 "/home/davit/Desktop/sim/zephyr/include/zephyr/sys/util_macro.h" 2 3 4
+# 20 "/home/davit/Desktop/sim/zephyr/include/zephyr/dt-bindings/dt-util.h" 2 3 4
+# 10 "/home/davit/Desktop/sim/zephyr/include/zephyr/dt-bindings/pinctrl/ch58x-pinctrl.h" 2 3 4
+# 1 "/home/davit/Desktop/sim/zephyr/include/zephyr/dt-bindings/pinctrl/ch5xx-pinctrl-common.h" 1 3 4
+# 11 "/home/davit/Desktop/sim/zephyr/include/zephyr/dt-bindings/pinctrl/ch58x-pinctrl.h" 2 3 4
+# 7 "/home/davit/Desktop/sim/zephyr/dts/riscv/wch/ch58x/ch58x-common-pinctrl.dtsi" 2 3 4
+
+&pinctrl {
+ /omit-if-no-ref/ tmr0_capture_default: tmr0_capture_default {
+  group1 {
+   pinmux = <((((('A' - 'A') & ((1UL << (8)) - 1UL)) << (0)) | ((9 & ((1UL << (8)) - 1UL)) << (8))) | ((0 & ((1UL << (8)) - 1UL)) << (16)) | (((0)) << (24)))>;
+   input-enable;
+  };
+ };
+
+ /omit-if-no-ref/ tmr0_output_default: tmr0_output_default {
+  group1 {
+   pinmux = <((((('A' - 'A') & ((1UL << (8)) - 1UL)) << (0)) | ((9 & ((1UL << (8)) - 1UL)) << (8))) | ((0 & ((1UL << (8)) - 1UL)) << (16)) | (((0)) << (24)))>;
+   output-enable;
+   drive-push-pull;
+  };
+ };
+
+ /omit-if-no-ref/ tmr0_capture_remap: tmr0_capture_remap {
+  group1 {
+   pinmux = <((((('B' - 'A') & ((1UL << (8)) - 1UL)) << (0)) | ((23 & ((1UL << (8)) - 1UL)) << (8))) | ((0 & ((1UL << (8)) - 1UL)) << (16)) | (((1)) << (24)))>;
+   input-enable;
+  };
+ };
+
+ /omit-if-no-ref/ tmr0_output_remap: tmr0_output_remap {
+  group1 {
+   pinmux = <((((('B' - 'A') & ((1UL << (8)) - 1UL)) << (0)) | ((23 & ((1UL << (8)) - 1UL)) << (8))) | ((0 & ((1UL << (8)) - 1UL)) << (16)) | (((1)) << (24)))>;
+   output-enable;
+   drive-push-pull;
+  };
+ };
+
+ /omit-if-no-ref/ tmr1_capture_default: tmr1_capture_default {
+  group1 {
+   pinmux = <((((('A' - 'A') & ((1UL << (8)) - 1UL)) << (0)) | ((10 & ((1UL << (8)) - 1UL)) << (8))) | ((1 & ((1UL << (8)) - 1UL)) << (16)) | (((0)) << (24)))>;
+   input-enable;
+  };
+ };
+
+ /omit-if-no-ref/ tmr1_output_default: tmr1_output_default {
+  group1 {
+   pinmux = <((((('A' - 'A') & ((1UL << (8)) - 1UL)) << (0)) | ((10 & ((1UL << (8)) - 1UL)) << (8))) | ((1 & ((1UL << (8)) - 1UL)) << (16)) | (((0)) << (24)))>;
+   output-enable;
+   drive-push-pull;
+  };
+ };
+
+ /omit-if-no-ref/ tmr1_capture_remap: tmr1_capture_remap {
+  group1 {
+   pinmux = <((((('B' - 'A') & ((1UL << (8)) - 1UL)) << (0)) | ((10 & ((1UL << (8)) - 1UL)) << (8))) | ((1 & ((1UL << (8)) - 1UL)) << (16)) | (((1)) << (24)))>;
+   input-enable;
+  };
+ };
+
+ /omit-if-no-ref/ tmr1_output_remap: tmr1_output_remap {
+  group1 {
+   pinmux = <((((('B' - 'A') & ((1UL << (8)) - 1UL)) << (0)) | ((10 & ((1UL << (8)) - 1UL)) << (8))) | ((1 & ((1UL << (8)) - 1UL)) << (16)) | (((1)) << (24)))>;
+   output-enable;
+   drive-push-pull;
+  };
+ };
+
+ /omit-if-no-ref/ tmr2_capture_default: tmr2_capture_default {
+  group1 {
+   pinmux = <((((('A' - 'A') & ((1UL << (8)) - 1UL)) << (0)) | ((11 & ((1UL << (8)) - 1UL)) << (8))) | ((2 & ((1UL << (8)) - 1UL)) << (16)) | (((0)) << (24)))>;
+   input-enable;
+  };
+ };
+
+ /omit-if-no-ref/ tmr2_output_default: tmr2_output_default {
+  group1 {
+   pinmux = <((((('A' - 'A') & ((1UL << (8)) - 1UL)) << (0)) | ((11 & ((1UL << (8)) - 1UL)) << (8))) | ((2 & ((1UL << (8)) - 1UL)) << (16)) | (((0)) << (24)))>;
+   output-enable;
+   drive-push-pull;
+  };
+ };
+
+ /omit-if-no-ref/ tmr2_capture_remap: tmr2_capture_remap {
+  group1 {
+   pinmux = <((((('B' - 'A') & ((1UL << (8)) - 1UL)) << (0)) | ((11 & ((1UL << (8)) - 1UL)) << (8))) | ((2 & ((1UL << (8)) - 1UL)) << (16)) | (((1)) << (24)))>;
+   input-enable;
+  };
+ };
+
+ /omit-if-no-ref/ tmr2_output_remap: tmr2_output_remap {
+  group1 {
+   pinmux = <((((('B' - 'A') & ((1UL << (8)) - 1UL)) << (0)) | ((11 & ((1UL << (8)) - 1UL)) << (8))) | ((2 & ((1UL << (8)) - 1UL)) << (16)) | (((1)) << (24)))>;
+   output-enable;
+   drive-push-pull;
+  };
+ };
+
+ /omit-if-no-ref/ tmr3_capture_default: tmr3_capture_default {
+  group1 {
+   pinmux = <((((('B' - 'A') & ((1UL << (8)) - 1UL)) << (0)) | ((22 & ((1UL << (8)) - 1UL)) << (8))) | ((3 & ((1UL << (8)) - 1UL)) << (16)) | (((0)) << (24)))>;
+   input-enable;
+  };
+ };
+
+ /omit-if-no-ref/ tmr3_output_default: tmr3_output_default {
+  group1 {
+   pinmux = <((((('B' - 'A') & ((1UL << (8)) - 1UL)) << (0)) | ((22 & ((1UL << (8)) - 1UL)) << (8))) | ((3 & ((1UL << (8)) - 1UL)) << (16)) | (((0)) << (24)))>;
+   output-enable;
+   drive-push-pull;
+  };
+ };
+
+ /omit-if-no-ref/ uart0_default: uart0_default {
+  group1 {
+   pinmux = <((((('B' - 'A') & ((1UL << (8)) - 1UL)) << (0)) | ((7 & ((1UL << (8)) - 1UL)) << (8))) | ((4 & ((1UL << (8)) - 1UL)) << (16)) | (((0)) << (24)))>;
+   output-enable;
+   drive-push-pull;
+  };
+  group2 {
+   pinmux = <((((('B' - 'A') & ((1UL << (8)) - 1UL)) << (0)) | ((4 & ((1UL << (8)) - 1UL)) << (8))) | ((4 & ((1UL << (8)) - 1UL)) << (16)) | (((0)) << (24)))>;
+   input-enable;
+  };
+ };
+
+ /omit-if-no-ref/ uart0_remap: uart0_remap {
+  group1 {
+   pinmux = <((((('A' - 'A') & ((1UL << (8)) - 1UL)) << (0)) | ((14 & ((1UL << (8)) - 1UL)) << (8))) | ((4 & ((1UL << (8)) - 1UL)) << (16)) | (((1)) << (24)))>;
+   output-enable;
+   drive-push-pull;
+  };
+  group2 {
+   pinmux = <((((('A' - 'A') & ((1UL << (8)) - 1UL)) << (0)) | ((15 & ((1UL << (8)) - 1UL)) << (8))) | ((4 & ((1UL << (8)) - 1UL)) << (16)) | (((1)) << (24)))>;
+   input-enable;
+  };
+ };
+
+ /omit-if-no-ref/ modem_remap: modem_remap {
+  group1 {
+   pinmux = <((((('B' - 'A') & ((1UL << (8)) - 1UL)) << (0)) | ((15 & ((1UL << (8)) - 1UL)) << (8))) | ((12 & ((1UL << (8)) - 1UL)) << (16)) | (((1)) << (24)))>,
+     <(((('B' - 'A') & ((1UL << (8)) - 1UL)) << (0)) | ((6 & ((1UL << (8)) - 1UL)) << (8)))>;
+   output-enable;
+   drive-push-pull;
+  };
+  group2 {
+   pinmux = <(((('B' - 'A') & ((1UL << (8)) - 1UL)) << (0)) | ((0 & ((1UL << (8)) - 1UL)) << (8)))>,
+     <((((('B' - 'A') & ((1UL << (8)) - 1UL)) << (0)) | ((14 & ((1UL << (8)) - 1UL)) << (8))) | ((12 & ((1UL << (8)) - 1UL)) << (16)) | (((1)) << (24)))>,
+     <(((('B' - 'A') & ((1UL << (8)) - 1UL)) << (0)) | ((2 & ((1UL << (8)) - 1UL)) << (8)))>,
+     <(((('B' - 'A') & ((1UL << (8)) - 1UL)) << (0)) | ((3 & ((1UL << (8)) - 1UL)) << (8)))>;
+   input-enable;
+  };
+ };
+
+ /omit-if-no-ref/ uart1_default: uart1_default {
+  group1 {
+   pinmux = <((((('A' - 'A') & ((1UL << (8)) - 1UL)) << (0)) | ((9 & ((1UL << (8)) - 1UL)) << (8))) | ((5 & ((1UL << (8)) - 1UL)) << (16)) | (((0)) << (24)))>;
+   output-enable;
+   drive-push-pull;
+  };
+  group2 {
+   pinmux = <((((('A' - 'A') & ((1UL << (8)) - 1UL)) << (0)) | ((8 & ((1UL << (8)) - 1UL)) << (8))) | ((5 & ((1UL << (8)) - 1UL)) << (16)) | (((0)) << (24)))>;
+   input-enable;
+  };
+ };
+
+ /omit-if-no-ref/ uart1_remap: uart1_remap {
+  group1 {
+   pinmux = <((((('B' - 'A') & ((1UL << (8)) - 1UL)) << (0)) | ((13 & ((1UL << (8)) - 1UL)) << (8))) | ((5 & ((1UL << (8)) - 1UL)) << (16)) | (((1)) << (24)))>;
+   output-enable;
+   drive-push-pull;
+  };
+  group2 {
+   pinmux = <((((('B' - 'A') & ((1UL << (8)) - 1UL)) << (0)) | ((12 & ((1UL << (8)) - 1UL)) << (8))) | ((5 & ((1UL << (8)) - 1UL)) << (16)) | (((1)) << (24)))>;
+   input-enable;
+  };
+ };
+
+ /omit-if-no-ref/ spi0_default: spi0_default {
+  group1 {
+   pinmux = <((((('A' - 'A') & ((1UL << (8)) - 1UL)) << (0)) | ((13 & ((1UL << (8)) - 1UL)) << (8))) | ((8 & ((1UL << (8)) - 1UL)) << (16)) | (((0)) << (24)))>,
+     <((((('A' - 'A') & ((1UL << (8)) - 1UL)) << (0)) | ((14 & ((1UL << (8)) - 1UL)) << (8))) | ((8 & ((1UL << (8)) - 1UL)) << (16)) | (((0)) << (24)))>;
+   output-enable;
+   drive-push-pull;
+  };
+  group2 {
+   pinmux = <((((('A' - 'A') & ((1UL << (8)) - 1UL)) << (0)) | ((15 & ((1UL << (8)) - 1UL)) << (8))) | ((8 & ((1UL << (8)) - 1UL)) << (16)) | (((0)) << (24)))>;
+   input-enable;
+  };
+ };
+
+ /omit-if-no-ref/ spi0_remap: spi0_remap {
+  group1 {
+   pinmux = <((((('B' - 'A') & ((1UL << (8)) - 1UL)) << (0)) | ((13 & ((1UL << (8)) - 1UL)) << (8))) | ((8 & ((1UL << (8)) - 1UL)) << (16)) | (((1)) << (24)))>,
+     <((((('B' - 'A') & ((1UL << (8)) - 1UL)) << (0)) | ((14 & ((1UL << (8)) - 1UL)) << (8))) | ((8 & ((1UL << (8)) - 1UL)) << (16)) | (((1)) << (24)))>;
+   output-enable;
+   drive-push-pull;
+  };
+  group2 {
+   pinmux = <((((('B' - 'A') & ((1UL << (8)) - 1UL)) << (0)) | ((15 & ((1UL << (8)) - 1UL)) << (8))) | ((8 & ((1UL << (8)) - 1UL)) << (16)) | (((1)) << (24)))>;
+   input-enable;
+  };
+ };
+
+ /omit-if-no-ref/ i2c_default: i2c_default {
+  group1 {
+   pinmux = <((((('B' - 'A') & ((1UL << (8)) - 1UL)) << (0)) | ((13 & ((1UL << (8)) - 1UL)) << (8))) | ((11 & ((1UL << (8)) - 1UL)) << (16)) | (((0)) << (24)))>;
+   output-enable;
+   drive-push-pull;
+  };
+  group2 {
+   pinmux = <((((('B' - 'A') & ((1UL << (8)) - 1UL)) << (0)) | ((12 & ((1UL << (8)) - 1UL)) << (8))) | ((11 & ((1UL << (8)) - 1UL)) << (16)) | (((0)) << (24)))>;
+   input-enable;
+  };
+ };
+};
+# 7 "/home/davit/Desktop/sim/zephyr/dts/riscv/wch/ch58x/ch582f-pinctrl.dtsi" 2 3 4
+
+&pinctrl {
+ /omit-if-no-ref/ pwm_default: pwm_default {
+  group1 {
+   pinmux = <((((('A' - 'A') & ((1UL << (8)) - 1UL)) << (0)) | ((12 & ((1UL << (8)) - 1UL)) << (8))) | ((10 & ((1UL << (8)) - 1UL)) << (16)) | (((0)) << (24)))>,
+    <((((('A' - 'A') & ((1UL << (8)) - 1UL)) << (0)) | ((13 & ((1UL << (8)) - 1UL)) << (8))) | ((10 & ((1UL << (8)) - 1UL)) << (16)) | (((0)) << (24)))>,
+    <((((('B' - 'A') & ((1UL << (8)) - 1UL)) << (0)) | ((4 & ((1UL << (8)) - 1UL)) << (8))) | ((10 & ((1UL << (8)) - 1UL)) << (16)) | (((0)) << (24)))>,
+    <((((('B' - 'A') & ((1UL << (8)) - 1UL)) << (0)) | ((7 & ((1UL << (8)) - 1UL)) << (8))) | ((10 & ((1UL << (8)) - 1UL)) << (16)) | (((0)) << (24)))>,
+    <((((('B' - 'A') & ((1UL << (8)) - 1UL)) << (0)) | ((14 & ((1UL << (8)) - 1UL)) << (8))) | ((10 & ((1UL << (8)) - 1UL)) << (16)) | (((0)) << (24)))>,
+    <((((('B' - 'A') & ((1UL << (8)) - 1UL)) << (0)) | ((23 & ((1UL << (8)) - 1UL)) << (8))) | ((10 & ((1UL << (8)) - 1UL)) << (16)) | (((0)) << (24)))>;
+   output-enable;
+   drive-push-pull;
+  };
+ };
+};
+# 11 "/home/davit/Desktop/sim/sim-fw/boards/sim-cxx/sim-cxx.dts" 2
+
+/ {
+ model = "GBUTech SIM Cartridge board";
+ compatible = "wch,sim-cxx";
+
+ aliases {
+  pwm-led0 = &front_led_green;
+ };
+
+ chosen {
+  zephyr,sram = &sram;
+  zephyr,flash = &flash0;
+  zephyr,console = &uart1;
+  zephyr,shell-uart = &uart1;
+  zephyr,code-partition = &slot0_partition;
+ };
+
+ pwmleds {
+  compatible = "pwm-leds";
+  front_led_red: pwm_led_pb7 {
+   pwms = <&pwm 9 ((107) * 1000UL) (0 << 0)>;
+  };
+  front_led_green: pwm_led_pa13 {
+   pwms = <&pwm 5 ((107) * 1000UL) (0 << 0)>;
+  };
+  front_led_blue: pwm_led_pa12 {
+   pwms = <&pwm 4 ((107) * 1000UL) (0 << 0)>;
+  };
+
+  top_led_red: pwm_led_pb4 {
+   pwms = <&pwm 7 ((107) * 1000UL) (0 << 0)>;
+  };
+  top_led_green: pwm_led_pb23 {
+   pwms = <&pwm 11 ((107) * 1000UL) (0 << 0)>;
+  };
+  top_led_blue: pwm_led_pb14 {
+   pwms = <&pwm 10 ((107) * 1000UL) (0 << 0)>;
+  };
+ };
+};
+
+&hclk {
+ clock-frequency = <((60) * 1000 * 1000)>;
+};
+
+&uart1 {
+ status = "okay";
+ current-speed = <115200>;
+ pinctrl-0 = <&uart1_default>;
+ pinctrl-names = "default";
+};
+
+&pwm {
+ compatible = "wch,ch5xx-pwm";
+ status = "okay";
+ pinctrl-0 = <&pwm_default>;
+ pinctrl-names = "default";
+ prescaler = <25>;
+ period = <256>;
+};
+
+zephyr_udc0: &usbd {
+ maximum-speed = "full-speed";
+ status = "okay";
+};
+
+&flash0 {
+
+ partitions {
+  compatible = "fixed-partitions";
+  #address-cells = <1>;
+  #size-cells = <1>;
+
+
+
+
+  boot_partition: partition@0 {
+   label = "mcuboot";
+   reg = <0x00000000 0x0000C000>;
+  };
+  slot0_partition: partition@C000 {
+   label = "image-0";
+   reg = <0x0000C000 0x00032000>;
+  };
+  slot1_partition: partition@3E000 {
+   label = "image-1";
+   reg = <0x0003E000 0x00032000>;
+  };
+# 110 "/home/davit/Desktop/sim/sim-fw/boards/sim-cxx/sim-cxx.dts"
+  storage_partition: partition@70000 {
+   label = "storage";
+   reg = <0x00070000 0x00008000>;
+  };
+ };
+};
+# 0 "<command-line>" 2
+# 1 "/home/davit/Desktop/sim/sim-fw/apps/cartridge/sim-cxx.overlay" 1
+/{
+
+ vcpmap {
+  compatible = "vcp,map";
+
+
+
+
+
+
+
+  vcp_usb0: vcp_usb0{
+   link = <&vcp_link_cdc0>;
+   vcp_role = "VCP_TRANSP_ROLE_SLAVE";
+   rx_timeout = <0>;
+   req_buf_size = <512>;
+   resp_buf_size = <512>;
+  };
+
+ };
+
+};
+&uart0 {
+ status = "disabled";
+ current-speed = <115200>;
+ pinctrl-0 = <&uart0_default>;
+ pinctrl-names = "default";
+
+
+
+
+
+
+};
+
+zephyr_udc0: &usbd {
+ maximum-speed = "full-speed";
+ cdc_acm_uart0: cdc_acm_uart0{
+  compatible = "zephyr,cdc-acm-uart";
+  vcp_link_cdc0: vcp_link_cdc0{
+   compatible = "vcp,link-uart";
+   vcp_addr = <2>;
+   rx_max_size = <512>;
+   tx_max_size = <512>;
+  };
+ };
+};
+# 0 "<command-line>" 2
+# 1 "/home/davit/Desktop/sim/zephyr/misc/empty_file.c"

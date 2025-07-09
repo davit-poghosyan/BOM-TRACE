@@ -1,0 +1,48 @@
+config ZEPHYR_SIM_FW_MODULE
+   bool
+   default y
+menu "vcp (/home/davit/Desktop/sim/wch-test/modules/vcp)"
+osource "/home/davit/Desktop/sim/wch-test/modules/vcp/Kconfig"
+config ZEPHYR_VCP_MODULE
+	bool
+	default y
+endmenu
+menu "queue-chan (/home/davit/Desktop/sim/wch-test/modules/queue-chan)"
+osource "/home/davit/Desktop/sim/wch-test/modules/queue-chan/Kconfig"
+config ZEPHYR_QUEUE_CHAN_MODULE
+	bool
+	default y
+endmenu
+menu "scope (/home/davit/Desktop/sim/wch-test/modules/scope)"
+osource "/home/davit/Desktop/sim/wch-test/modules/scope/Kconfig"
+config ZEPHYR_SCOPE_MODULE
+	bool
+	default y
+endmenu
+menu "cmsis (/home/davit/Desktop/sim/modules/hal/cmsis)"
+osource "$(ZEPHYR_CMSIS_KCONFIG)"
+config ZEPHYR_CMSIS_MODULE
+	bool
+	default y
+endmenu
+menu "hal_wch (/home/davit/Desktop/sim/modules/hal/wch)"
+osource "/home/davit/Desktop/sim/modules/hal/wch/Kconfig.wch"
+config ZEPHYR_HAL_WCH_MODULE
+	bool
+	default y
+endmenu
+menu "littlefs (/home/davit/Desktop/sim/modules/fs/littlefs)"
+osource "$(ZEPHYR_LITTLEFS_KCONFIG)"
+config ZEPHYR_LITTLEFS_MODULE
+	bool
+	default y
+endmenu
+menu "mbedtls (/home/davit/Desktop/sim/modules/crypto/mbedtls)"
+osource "$(ZEPHYR_MBEDTLS_KCONFIG)"
+config ZEPHYR_MBEDTLS_MODULE
+	bool
+	default y
+endmenu
+config ZEPHYR_MCUBOOT_MODULE
+   bool
+   default y

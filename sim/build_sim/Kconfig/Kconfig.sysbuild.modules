@@ -1,0 +1,27 @@
+config ZEPHYR_SIM_FW_MODULE
+   bool
+   default y
+config ZEPHYR_VCP_MODULE
+   bool
+   default y
+config ZEPHYR_QUEUE_CHAN_MODULE
+   bool
+   default y
+config ZEPHYR_SCOPE_MODULE
+   bool
+   default y
+config ZEPHYR_CMSIS_MODULE
+   bool
+   default y
+config ZEPHYR_HAL_WCH_MODULE
+   bool
+   default y
+config ZEPHYR_LITTLEFS_MODULE
+   bool
+   default y
+config ZEPHYR_MBEDTLS_MODULE
+   bool
+   default y
+config ZEPHYR_MCUBOOT_MODULE
+   bool
+   default y
