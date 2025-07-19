@@ -35,7 +35,7 @@ class LedStripe:
         return data
 
     def shine_leds(self,
-        status_color: tuple[int, int, int],
+        status: tuple[int, int, int],
         BOM_Trace: tuple[int, int, int],
         logo: tuple[int, int, int],
         led_sequence: List[Tuple[int, tuple[int, int, int]]]
@@ -43,9 +43,9 @@ class LedStripe:
         led_stripe = [(0, 0, 0)] * 99
 
         # Set static sections
-        led_stripe[0:5] = [status_color] * 5
+        led_stripe[0:5] = [logo] * 5
         led_stripe[5:10] = [BOM_Trace] * 5
-        led_stripe[10:19] = [logo] * 19
+        led_stripe[10:19] = [status] * 19
 
         # Set dynamic sequence starting at offset 19
         for index, (r, g, b) in led_sequence:
@@ -94,6 +94,6 @@ led_updates = [
     (10, (255, 255, 0))
 ]
 
-ledSTR.shine_leds((0, 0, 255), (0, 0, 255), (255, 0, 0), led_updates)
+ledSTR.shine_leds((0, 255, 0), (0, 0, 255), (255, 0, 0), led_updates)
 
 time.sleep(0.5)
