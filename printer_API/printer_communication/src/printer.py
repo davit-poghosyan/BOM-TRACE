@@ -72,7 +72,7 @@ def send_to_zpl():
     print(f"pos_x {res["pos_x"]}")
     print(f"rotation {res["rotation"]}")
 
-    with open("/home/davit/Desktop/doubleK/BOM-TRACE/new.pdf", "rb") as pdf:
+    with open("/home/davit/Desktop/doubleK/BOM-TRACE/media/new.pdf", "rb") as pdf:
         zpl_string = ZebrafyPDF(
             pdf.read(),
             format="ASCII",
