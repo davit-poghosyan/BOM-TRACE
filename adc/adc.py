@@ -24,7 +24,15 @@ def raw_adc_val_to_volt(adc_val):
 def volt_to_amp(volt):
     return volt / (0.015 * 20)
 
-def amp_calculatoin(channel):
+def volt_calculation(channel):
+    try:
+        adc_raw = read_adc(channel)
+        voltage = raw_adc_val_to_volt(adc_raw)  
+        return voltage*3  
+    except KeyboardInterrupt:
+            print("\nExit program.") 
+
+def amp_calculation(channel):
 
     try:
         buff = 0
@@ -54,8 +62,10 @@ def amp_calculatoin(channel):
 
 try:
     while(True):
-        amp2 = amp_calculatoin(ADC_CHANNEL2)
+        amp2 = amp_calculation(ADC_CHANNEL2)
+        volt3 = volt_calculation(ADC_CHANNEL3)
         print(f"amper(adc2) {amp2}")
+        print(f"volt(adc3) {volt3}")
         time.sleep(prog_delay)
 except KeyboardInterrupt:
     print("\nExit program.") 
