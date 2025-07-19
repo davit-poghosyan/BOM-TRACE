@@ -59,7 +59,7 @@ def amp_calculation(channel):
     except KeyboardInterrupt:
             print("\nExit program.") 
 
-
+        
 try:
     while(True):
         amp2 = amp_calculation(ADC_CHANNEL2)
