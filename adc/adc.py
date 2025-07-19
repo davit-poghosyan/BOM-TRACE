@@ -59,13 +59,15 @@ def amp_calculation(channel):
     except KeyboardInterrupt:
             print("\nExit program.") 
 
-        
+
 try:
     while(True):
         amp2 = amp_calculation(ADC_CHANNEL2)
         volt3 = volt_calculation(ADC_CHANNEL3)
         print(f"amper(adc2) {amp2}")
         print(f"volt(adc3) {volt3}")
+        print(f"\n")
+
         time.sleep(prog_delay)
 except KeyboardInterrupt:
     print("\nExit program.") 
